@@ -31,13 +31,15 @@ fn handle_connection(mut stream: TcpStream) {
         }
         stream.flush().unwrap();
     } else  {
+        let status_line = "HTTP/1.1 404 NOT FOUND\r\n\r\n";
         let contents = fs::read_to_string("404.html").unwrap();
 
-        let response = format!("HTTP/1.1 200 OK\r\n\r\n{}", contents);
+        let response = format!("{}{}", status_line, contents);
 
         match stream.write(response.as_bytes()){
             Ok(_) => println!("Response sent"),
             Err(e) => println!("Response failed, error : {}", e),
         }
+        stream.flush().unwrap();
     }
 }
